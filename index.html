@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RTB TOP UP Admin</title>
+<style>
+:root{--bg:#08111f;--p:#102038;--p2:#142a45;--line:#29415f;--t:#edf5ff;--m:#9db0c8;--a:#50c4ff;--g:#70e2b8;--r:#ff8095}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#07101c,#10233b);color:var(--t);font:15px system-ui,"Noto Sans Bengali",sans-serif}header{padding:18px max(16px,calc((100% - 1150px)/2));border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:10px}h1{font-size:20px;margin:0}small,.muted{color:var(--m)}main{max-width:1150px;margin:22px auto;padding:0 15px}.box{background:var(--p);border:1px solid var(--line);border-radius:14px;padding:16px;margin:13px 0}.warn{background:#2b2618;color:#ffe5a6;border:1px solid #75602b;border-radius:11px;padding:12px;line-height:1.55}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:11px}.metric{font-size:26px;font-weight:800;margin-top:5px}.tabs{display:flex;gap:7px;flex-wrap:wrap;margin:17px 0}.tabs button,button{background:#19314e;color:var(--t);border:1px solid var(--line);border-radius:9px;padding:10px 13px;cursor:pointer}.tabs button.active,.primary{background:var(--a);color:#061321;border-color:var(--a);font-weight:800}.danger{color:#ff9cab;border-color:#713c4b}.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}label{display:block;color:var(--m);font-size:13px;margin:9px 0 5px}input,select,textarea{width:100%;padding:11px;background:#091629;color:var(--t);border:1px solid var(--line);border-radius:9px;font:inherit}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.hidden{display:none!important}.tablewrap{overflow:auto}table{width:100%;min-width:560px;border-collapse:collapse;margin-top:13px}td,th{text-align:left;padding:10px;border-bottom:1px solid var(--line)}th{color:var(--m);font-size:12px}.pill{background:#194036;color:#8ce7c5;border-radius:20px;padding:4px 8px;font-size:12px}.offer{padding:12px;border:1px solid var(--line);border-radius:10px;margin:9px 0}.error{color:#ff9bab}.success{color:#82e9c0}footer{text-align:center;color:var(--m);padding:20px;font-size:12px}
+</style></head><body>
+<header><div><h1>💎 RTB TOP UP — Admin</h1><small>Secure server-connected dashboard</small></div><button id="logout" class="hidden" onclick="logout()">লগআউট</button></header>
+<main>
+<div class="warn"><b>লাইভ সার্ভার:</b> এই প্যানেল সার্ভারের ডেটাবেস ব্যবহার করে। চালাতে হলে README অনুযায়ী হোস্টিংয়ে ডেপ্লয় ও Admin credentials সেট করতে হবে। এখানে কোনো পেমেন্ট গেটওয়ে বা ডায়মন্ড সরবরাহকারী সংযোগ এখনো নেই।</div>
+<section id="loginBox" class="box" style="max-width:440px;margin:25px auto">
+<h2>Admin Login</h2><p class="muted">হোস্টিংয়ে নির্ধারিত অ্যাডমিন ইউজারনেম ও পাসওয়ার্ড ব্যবহার করো।</p>
+<label>ইউজারনেম</label><input id="username" autocomplete="username" placeholder="Admin username">
+<label>পাসওয়ার্ড</label><input id="password" type="password" autocomplete="current-password" placeholder="Admin password">
+<div class="actions"><button class="primary" onclick="login()">লগইন</button></div><p id="loginMsg" class="error"></p>
+</section>
+<div id="app" class="hidden">
+<div class="grid">
+<div class="box"><small>মোট প্যাকেজ</small><div class="metric" id="mPackages">0</div></div>
+<div class="box"><small>মোট অর্ডার</small><div class="metric" id="mOrders">0</div></div>
+<div class="box"><small>অপেক্ষমাণ অর্ডার</small><div class="metric" id="mPending">0</div></div>
+<div class="box"><small>অফার</small><div class="metric" id="mOffers">0</div></div>
+</div>
+<div class="tabs"><button class="active" data-tab="packages">প্যাকেজ</button><button data-tab="orders">অর্ডার</button><button data-tab="offers">অফার</button><button data-tab="settings">সেটিংস</button></div>
+<section id="packages" class="box page"><h2>প্যাকেজ যোগ / সম্পাদনা</h2><input id="pkgId" type="hidden"><div class="row">
+<div><label>প্যাকেজের নাম</label><input id="pkgName" placeholder="যেমন: 100 Diamonds"></div>
+<div><label>ক্যাটাগরি</label><select id="pkgCategory"><option>Diamond</option><option>Membership</option><option>Weekly Lite</option><option>Special Offer</option></select></div>
+<div><label>সার্ভার</label><select id="pkgCountry"><option>Bangladesh</option><option>India</option><option>Indonesia</option></select></div>
+<div><label>দাম (৳)</label><input id="pkgPrice" type="number" min="0"></div>
+<div><label>অবস্থা</label><select id="pkgActive"><option value="1">চালু</option><option value="0">বন্ধ</option></select></div>
+</div><div class="actions"><button class="primary" onclick="savePackage()">সংরক্ষণ</button><button onclick="clearPackage()">ফর্ম পরিষ্কার</button></div>
+<div class="tablewrap"><table><thead><tr><th>নাম</th><th>ক্যাটাগরি</th><th>সার্ভার</th><th>দাম</th><th>অবস্থা</th><th>কাজ</th></tr></thead><tbody id="packageRows"></tbody></table></div></section>
+<section id="orders" class="box page hidden"><h2>অর্ডার</h2><p class="muted">সার্ভারে থাকা অর্ডারের অবস্থা এখানে পরিবর্তন করা যাবে। অর্ডার জমা দেওয়ার পাবলিক ফর্ম/পেমেন্ট এখনো আলাদা করে সংযুক্ত করতে হবে।</p><div class="tablewrap"><table><thead><tr><th>ID</th><th>Player ID</th><th>প্যাকেজ</th><th>দেশ</th><th>যোগাযোগ</th><th>অবস্থা</th><th>আপডেট</th></tr></thead><tbody id="orderRows"></tbody></table></div></section>
+<section id="offers" class="box page hidden"><h2>অফার ম্যানেজমেন্ট</h2><div class="row"><div><label>অফারের শিরোনাম</label><input id="offerTitle" placeholder="বিশেষ ছাড়"></div><div><label>বিস্তারিত</label><input id="offerDesc" placeholder="অফারের বিবরণ"></div><div><label>অবস্থা</label><select id="offerActive"><option value="1">চালু</option><option value="0">বন্ধ</option></select></div></div><div class="actions"><button class="primary" onclick="saveOffer()">অফার যোগ</button></div><div id="offerRows"></div></section>
+<section id="settings" class="box page hidden"><h2>ওয়েবসাইট সেটিংস</h2><div class="row"><div><label>ওয়েবসাইটের নাম</label><input id="siteName"></div><div><label>WhatsApp নম্বর</label><input id="whatsapp"></div><div><label>Telegram লিংক</label><input id="telegram"></div></div><label>নোটিশ</label><input id="notice"><div class="actions"><button class="primary" onclick="saveSettings()">সেটিংস সংরক্ষণ</button></div></section>
+</div></main><footer>RTB TOP UP • Server-backed admin starter</footer>
+<script>
+const $=id=>document.getElementById(id);
+async function api(url,opts={}){let r=await fetch('/api'+url,{...opts,headers:{'Content-Type':'application/json',...(opts.headers||{})}});let data=await r.json().catch(()=>({}));if(!r.ok)throw new Error(data.error||'সার্ভার সমস্যা');return data}
+function msg(id,text,cls='error'){$(id).textContent=text;$(id).className=cls}
+async function login(){try{await api('/admin/login',{method:'POST',body:JSON.stringify({username:$('username').value,password:$('password').value})});$('password').value='';msg('loginMsg','');await init()}catch(e){msg('loginMsg',e.message)}}
+async function logout(){try{await api('/admin/logout',{method:'POST'})}catch{}showLogin()}
+function showLogin(){$('app').classList.add('hidden');$('loginBox').classList.remove('hidden');$('logout').classList.add('hidden')}
+async function init(){try{await api('/admin/me');$('loginBox').classList.add('hidden');$('app').classList.remove('hidden');$('logout').classList.remove('hidden');await Promise.all([loadDashboard(),loadPackages(),loadOrders(),loadOffers(),loadSettings()])}catch{showLogin()}}
+async function loadDashboard(){let d=await api('/admin/dashboard');$('mPackages').textContent=d.packages;$('mOrders').textContent=d.orders;$('mPending').textContent=d.pending;$('mOffers').textContent=d.offers}
+async function loadPackages(){let a=await api('/admin/packages');$('packageRows').innerHTML=a.map(p=>`<tr><td>${esc(p.name)}</td><td>${esc(p.category)}</td><td>${esc(p.country)}</td><td>৳${p.price}</td><td>${p.active?'<span class="pill">চালু</span>':'বন্ধ'}</td><td><button onclick="editPackage(${p.id})">এডিট</button> <button class="danger" onclick="deletePackage(${p.id})">মুছুন</button></td></tr>`).join('')||'<tr><td colspan="6">কোনো প্যাকেজ নেই</td></tr>';window.packagesCache=a}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function clearPackage(){$('pkgId').value='';$('pkgName').value='';$('pkgPrice').value='';$('pkgCategory').value='Diamond';$('pkgCountry').value='Bangladesh';$('pkgActive').value='1'}
+function editPackage(id){let p=window.packagesCache.find(x=>x.id===id);if(!p)return;$('pkgId').value=p.id;$('pkgName').value=p.name;$('pkgCategory').value=p.category;$('pkgCountry').value=p.country;$('pkgPrice').value=p.price;$('pkgActive').value=String(p.active);goTab('packages')}
+async function savePackage(){try{let id=$('pkgId').value,p={name:$('pkgName').value,category:$('pkgCategory').value,country:$('pkgCountry').value,price:Number($('pkgPrice').value),active:$('pkgActive').value==='1'};await api('/admin/packages'+(id?'/'+id:''),{method:id?'PUT':'POST',body:JSON.stringify(p)});clearPackage();await loadPackages();await loadDashboard();alert('প্যাকেজ সংরক্ষণ হয়েছে')}catch(e){alert(e.message)}}
+async function deletePackage(id){if(!confirm('প্যাকেজটি মুছবেন?'))return;try{await api('/admin/packages/'+id,{method:'DELETE'});await loadPackages();await loadDashboard()}catch(e){alert(e.message)}}
+async function loadOrders(){let a=await api('/admin/orders');$('orderRows').innerHTML=a.map(o=>`<tr><td>${o.id}</td><td>${esc(o.player_id)}</td><td>${esc(o.package_name)}</td><td>${esc(o.country)}</td><td>${esc(o.customer_contact)}</td><td>${esc(o.status)}</td><td><select id="st${o.id}"><option ${o.status==='Pending'?'selected':''}>Pending</option><option ${o.status==='Processing'?'selected':''}>Processing</option><option ${o.status==='Completed'?'selected':''}>Completed</option><option ${o.status==='Cancelled'?'selected':''}>Cancelled</option></select><button onclick="updateOrder(${o.id})">সেভ</button></td></tr>`).join('')||'<tr><td colspan="7">এখনো কোনো অর্ডার নেই</td></tr>'}
+async function updateOrder(id){try{await api('/admin/orders/'+id,{method:'PATCH',body:JSON.stringify({status:$('st'+id).value})});await loadOrders();await loadDashboard();alert('অর্ডারের অবস্থা আপডেট হয়েছে')}catch(e){alert(e.message)}}
+async function loadOffers(){let a=await api('/admin/offers');$('offerRows').innerHTML=a.map(o=>`<div class="offer"><b>${esc(o.title)}</b> ${o.active?'<span class="pill">চালু</span>':'বন্ধ'}<p>${esc(o.description)}</p><button class="danger" onclick="deleteOffer(${o.id})">মুছুন</button></div>`).join('')||'<p class="muted">কোনো অফার নেই</p>'}
+async function saveOffer(){try{await api('/admin/offers',{method:'POST',body:JSON.stringify({title:$('offerTitle').value,description:$('offerDesc').value,active:$('offerActive').value==='1'})});$('offerTitle').value='';$('offerDesc').value='';await loadOffers();await loadDashboard()}catch(e){alert(e.message)}}
+async function deleteOffer(id){if(!confirm('অফারটি মুছবেন?'))return;try{await api('/admin/offers/'+id,{method:'DELETE'});await loadOffers();await loadDashboard()}catch(e){alert(e.message)}}
+async function loadSettings(){let s=await api('/admin/settings');$('siteName').value=s.siteName||'';$('whatsapp').value=s.whatsapp||'';$('telegram').value=s.telegram||'';$('notice').value=s.notice||''}
+async function saveSettings(){try{await api('/admin/settings',{method:'PUT',body:JSON.stringify({siteName:$('siteName').value,whatsapp:$('whatsapp').value,telegram:$('telegram').value,notice:$('notice').value})});alert('সেটিংস সংরক্ষণ হয়েছে')}catch(e){alert(e.message)}}
+function goTab(id){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('hidden',x.id!==id));document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('active',x.dataset.tab===id))}
+document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>goTab(b.dataset.tab)));
+init();
+</script></body></html>
